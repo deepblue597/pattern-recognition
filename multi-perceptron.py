@@ -811,19 +811,19 @@ X_test = X_test.reshape(num_samples, -1)
 
 #%% dataset 
 
-data = 'D:/pattern-recognition/dataset.csv'
+data = 'D:/pattern-recognition/datasetC.csv'
 
 df = pd.read_csv(data , header = None)
 
-X = df.drop([2], axis=1)
+X = df.drop(df.shape[1]-1, axis=1)
 
-y = df[2]
+y = df[df.shape[1]-1]
 
 y = [x - 1 for x in y]
 y = np.array(y, dtype= int)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.5, random_state = 0)
-
+class_names = ['1', '2' , '3' , '4' , '5']
 #%% Shape of the data 
 
 X_train.shape, X_test.shape
@@ -853,7 +853,7 @@ model.add(Layer_Dense(X_train.shape[1], 256))
 model.add(Activation_ReLU())
 model.add(Layer_Dense(256, 256))
 model.add(Activation_ReLU())
-model.add(Layer_Dense(256, 3))
+model.add(Layer_Dense(256, 5))
 
 model.add(Activation_Softmax())
 
@@ -879,6 +879,6 @@ print("Testing labels shape:", y_test.shape)
 #%%
 # Train the model
 model.train(X_train, y_train, validation_data=(X_test, y_test),
-            epochs=100,  print_every=100)
+            epochs=40,  print_every=100)
 
-#,
+#batch_size=128,
