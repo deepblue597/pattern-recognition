@@ -20,11 +20,20 @@ import seaborn as sns
 from sklearn.metrics import confusion_matrix  # To check for TP , TN , FP , FN
 from sklearn.metrics import classification_report
 import matplotlib.pyplot as plt
+import os
 
 
 #%% Import data 
+# Get the current working directory
+current_dir = os.getcwd()
 
-data = 'D:/pattern-recognition/dataset.csv'
+# Define the file name
+file_name = 'dataset.csv'  # Adjust the file name as needed
+
+# Create the file path by joining the current directory and the file name
+data = os.path.join(current_dir, file_name)
+
+#data = 'C:/pattern-recognition/dataset.csv'
 
 df = pd.read_csv(data , header = None)
 
@@ -231,3 +240,10 @@ for i in range(classifiers):
 
   plt.suptitle("Number of neighbors is {}".format(i+1))
   plt.show()
+  
+# =============================================================================
+#   We can see that the best model is the one with the 5 neighboors 
+#   Model accuracy score for  5  neighboor(s): 0.8929
+#   Training-set accuracy score for 5  neighboor(s): 0.9000
+#   we also see that we dont have overfitting
+# =============================================================================
