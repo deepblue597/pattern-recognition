@@ -810,8 +810,17 @@ X_test = X_test.reshape(num_samples, -1)
 # =============================================================================
 
 #%% dataset 
+import os
+#data = 'D:/pattern-recognition/datasetC.csv'
 
-data = 'D:/pattern-recognition/datasetC.csv'
+# Get the current working directory
+current_dir = os.getcwd()
+
+# Define the file name
+file_name = 'datasetC.csv'  # Adjust the file name as needed
+
+# Create the file path by joining the current directory and the file name
+data = os.path.join(current_dir, file_name)
 
 df = pd.read_csv(data , header = None)
 
@@ -882,3 +891,5 @@ model.train(X_train, y_train, validation_data=(X_test, y_test),
             epochs=40,  print_every=100)
 
 #batch_size=128,
+
+#TODO: add the test set that does not have the classes of the data 
