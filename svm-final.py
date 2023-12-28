@@ -281,7 +281,7 @@ class SVM_from_scratch :
 
 #%%  data preperation for self-made svm 
 
-class1, class2 = 1, 2  # You can choose the class indices based on the CIFAR-10 class names
+class1, class2 = 1, 2  # You can choose the class indices 
 
 # Filter training data and labels for the selected classes
 selected_train_indices = np.where((y_train == class1) | (y_train == class2))[0]
@@ -297,6 +297,19 @@ y_test_selected = y_test[selected_test_indices]
 # Convert class names to numeric labels in y_train_selected and y_test_selected
 y_train_selected_numeric = np.where(y_train_selected == class1, -1, 1)
 y_test_selected_numeric = np.where(y_test_selected == class1, -1, 1)
+
+#%% 
+
+y_train_unified = np.where((y_train == 2) | (y_train == 3), 2, y_train)
+
+y_test_unified = np.where((y_test == 2) | (y_test == 3), 2, y_test)
+
+y_train_unified_numeric = np.where(y_train_unified == class1, -1, 1)
+y_test_unified_numeric = np.where(y_test_unified == class1, -1, 1)
+
+
+
+
 
 
 #%% add the data to the self made svm 
@@ -327,6 +340,30 @@ accuracy = accuracy_score(y_test_selected_numeric, predictions)
 
 #%% plot
 plot_decision_regions(X_test_selected, y_test_selected_numeric, clf=svm_self_made, legend=2)
+plt.xlabel('1st feature')
+plt.ylabel('2nd feature')
+plt.title('SVM from scratch')
+plt.show() 
+
+#%% unified 
+
+start_time = time.perf_counter()
+svm_self_made.fit(X_train, y_train_unified_numeric)
+end_time = time.perf_counter()
+
+ 
+predictions = svm_self_made.predict(X_test)
+
+
+# compute and print accuracy score
+print('Model accuracy score: {0:0.4f}'. format(accuracy_score(y_test_unified_numeric, predictions)))
+print(classification_report(y_test_unified_numeric, predictions))
+print(end_time-start_time)
+# Log metrics
+accuracy = accuracy_score(y_test_unified_numeric, predictions)
+
+#%% plot
+plot_decision_regions(X_test, y_test_unified_numeric, clf=svm_self_made, legend=2)
 plt.xlabel('1st feature')
 plt.ylabel('2nd feature')
 plt.title('SVM from scratch')
