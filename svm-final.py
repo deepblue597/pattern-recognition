@@ -89,7 +89,7 @@ print(classification_report(y_test, y_pred))
 #Model accuracy score with linear kernel and C=1.0: 0.8000
 print(end_time-start_time)
 
-#%% 
+#%% training set
 
 # Plot training set
 plt.figure(figsize=(6, 6))
@@ -101,7 +101,7 @@ plt.xlabel('Feature 1')
 plt.ylabel('Feature 2')
 
 plt.show()
-#%% 
+#%% test set
 
 # Plot training set
 plt.figure(figsize=(6, 6))
@@ -115,7 +115,7 @@ plt.ylabel('Feature 2')
 plt.show()
 
 
-#%% 
+#%% false classifications
 
 # Scatter plot of training set
 plt.scatter(X_test[:, 0], X_test[:, 1], c=y_pred, edgecolors='k', marker='o', s=100, linewidth=1, cmap=plt.cm.Paired)
@@ -132,26 +132,6 @@ plt.legend()
 plt.show()
 
 
-#%% 
-
-# Create a meshgrid for decision boundary plotting
-h = .02  # Step size in the mesh
-x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
-y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
-xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
-
-# Plot actual data points
-plt.scatter(X_train[:, 0], X_train[:, 1], c=y_train, edgecolors='k', marker='o', s=100, linewidth=1, cmap=plt.cm.Paired, label='Actual Data')
-
-# Plot support vectors on top
-plt.scatter(linear_svc.support_vectors_[:, 0], linear_svc.support_vectors_[:, 1], facecolors='none', edgecolors='r', marker='o', s=300, linewidth=2, label='Support Vectors')
-
-plt.title('Actual Data and Support Vectors')
-plt.xlabel('Feature 1')
-plt.ylabel('Feature 2')
-plt.legend()
-
-plt.show()
 
 
 #%% rbf 
@@ -223,7 +203,7 @@ plt.legend()
 
 plt.show()
 
-#%% 
+#%%  linear svm
 from mlxtend.plotting import plot_decision_regions
 # Plotting decision regions
 plot_decision_regions(X_test, y_test.astype(np.int_), clf=best_estimator, legend=2)

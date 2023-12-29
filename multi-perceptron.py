@@ -754,60 +754,45 @@ class Model:
         # in reversed order passing dinputs as a parameter
         for layer in reversed(self.layers):
             layer.backward(layer.next.dinputs)
-
-
-#%% 
-# =============================================================================
-# Load CIFAR-10 dataset
-(X_train, y_train), (X_test, y_test) = cifar10.load_data()
-
-# make the rgb value from 0 - 255 --> 0 - 1 ==> scaling
-X_train, X_test = X_train / 255.0, X_test / 255.0
-
-# CIFAR-10 class names
-class_names = ['airplane', 'automobile', 'bird', 'cat',
-                'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
-
-
-# from 1 col mul rows --> 1 row mul cols
-print(y_train)
-y_train = y_train.reshape(-1,)
-print(y_train)
-
-print(y_test)
-y_test = y_test.reshape(-1,)
-print(y_test)
-
-# test to see if it works properly
-
-
-def showImage(x, y, index):
-    plt.figure(figsize=(15, 2))
-    plt.imshow(x[index])
-    plt.xlabel(class_names[y[index]])
-
-
-showImage(X_train, y_train, random.randint(0, 9))
-
-# the train and test data
-print(X_train.shape, X_test.shape)
-
-# Shuffle the training dataset
-keys = np.array(range(X_train.shape[0]))
-np.random.shuffle(keys)
-X_train = X_train[keys]
-y_train = y_train[keys]
-#%%
-# we want to reshape the image from a 4D array to a 2D array
-# This line extracts the number of samples, image height, image width, and number of channels (e.g., RGB channels) from the shape of the X_train array.
-num_samples, img_height, img_width, num_channels = X_train.shape
-
-# it flattens the image data, converting each image into a one-dimensional vector.
-# The resulting shape is (num_samples, img_height * img_width * num_channels),
-X_train = X_train.reshape(num_samples, -1)
-num_samples, img_height, img_width, num_channels = X_test.shape
-X_test = X_test.reshape(num_samples, -1)
-# =============================================================================
+    
+    #predicts on the samples 
+    def predict(self , X , * , batch_size = None): 
+        
+        #default value if batch size is not being set 
+        prediction_steps = 1 
+        
+        #calculate number of steps 
+        if batch_size is not None: 
+            prediction_steps = len(X) // batch_size 
+            #Dividing rounds down. if there are some remaining 
+            #data but not a full batch, this wont include it 
+            # add 1 to include this not full batch 
+            if len(X) % batch_size != 0  : 
+                prediction_steps += 1 
+        
+        output = [] 
+        
+        for step in range(prediction_steps): 
+            
+            #if batch size is not set
+            #train using one step and full dataset 
+            if batch_size is None : 
+                batch_X = X  
+            
+            #otherwise slice the batch 
+            else:
+                batch_X = X[step*batch_size:(step+1)*batch_size]
+                
+            #perform the forward pass 
+            
+        batch_output = self.forward(batch_X , training=False) 
+        
+        #append batch prediction to the lsit of predictions 
+        output.append(batch_output)
+        
+        #stack and return results 
+        return np.vstack(output) 
+        
 
 #%% dataset 
 import os
@@ -893,3 +878,64 @@ model.train(X_train, y_train, validation_data=(X_test, y_test),
 #batch_size=128,
 
 #TODO: add the test set that does not have the classes of the data 
+
+#%% test for the predict method 
+
+confidences = model.predict(X_test[:20])
+print(confidences)
+
+predictions = model.output_layer_activation.predictions(confidences)
+print(predictions)
+# Print first 5 labels
+print(y_test[:20])
+
+
+#%% predict of datasetCTest 
+
+
+
+# Define the file name
+test_file_name = 'datasetCTest.csv'  # Adjust the file name as needed
+
+# Create the file path by joining the current directory and the file name
+data = os.path.join(current_dir, test_file_name)
+
+#data = 'C:/pattern-recognition/dataset.csv'
+
+df_test = pd.read_csv(data , header = None)
+
+#%% Scaling 
+cols = df_test.columns
+
+scaler = StandardScaler()
+
+df_test = scaler.fit_transform(df_test)
+
+print(df_test.shape[1])
+
+#%% results 
+
+confidences = model.predict(df_test)
+print(confidences)
+
+labelsX = model.output_layer_activation.predictions(confidences)
+print(labelsX)
+
+#%% extraction 
+
+# # Convert NumPy array to Pandas Series
+# labelsX = pd.Series(labelsX, name='labelsX')
+
+
+# Save NumPy array to a .npy file
+np.save('labelsX.npy', labelsX)
+
+# Load the saved .npy file
+loaded_labelsX = np.load('labelsX.npy')
+
+# Get the number of samples (N) from df_test
+N = df_test.shape[0]
+
+# Ensure that the loaded_labelsX has the correct dimensions (N, )
+assert loaded_labelsX.shape == (N, )
+
